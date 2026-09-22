@@ -89,38 +89,55 @@
     </div>
 
     <script>
-        const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-        const today = new Date();
-        const currentMonth = today.getMonth();
-        const currentYear = today.getFullYear();
-        const currentDate = today.getDate();
+        // Auch hier verpacken wir alles in eine Funktion
+        function updateCalendar() {
+            const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const currentDate = today.getDate();
 
-        document.getElementById('month-year').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            // Monat und Jahr oben setzen
+            document.getElementById('month-year').innerText = `${monthNames[currentMonth]} ${currentYear}`;
 
-        const daysContainer = document.getElementById('days');
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const daysContainer = document.getElementById('days');
+            
+            // WICHTIG: Bevor wir aktualisieren, leeren wir die alten Tage aus dem Container!
+            daysContainer.innerHTML = '';
 
-        // JS getDay() starts Sunday(0), we want Monday(1)
-        let emptyDays = firstDay === 0 ? 6 : firstDay - 1;
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-        // Leere Tage vor dem 1. des Monats einfügen
-        for (let i = 0; i < emptyDays; i++) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.classList.add('day', 'empty');
-            daysContainer.appendChild(emptyDiv);
-        }
+            // Da JS den Sonntag als 0 sieht, wir aber den Montag als 1. Tag wollen
+            let emptyDays = firstDay === 0 ? 6 : firstDay - 1;
 
-        // Tage des Monats einfügen
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dayDiv = document.createElement('div');
-            dayDiv.classList.add('day');
-            dayDiv.innerText = i;
-            if (i === currentDate) {
-                dayDiv.classList.add('today');
+            // Leere Tage vor dem 1. des Monats einfügen
+            for (let i = 0; i < emptyDays; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.classList.add('day', 'empty');
+                daysContainer.appendChild(emptyDiv);
             }
-            daysContainer.appendChild(dayDiv);
+
+            // Tage des Monats einfügen
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.classList.add('day');
+                dayDiv.innerText = i;
+                
+                // Prüfen, ob dieser Tag heute ist, um ihn farblich zu markieren
+                if (i === currentDate) {
+                    dayDiv.classList.add('today');
+                }
+                
+                daysContainer.appendChild(dayDiv);
+            }
         }
+
+        // 1. Führe die Funktion beim ersten Laden der Seite aus
+        updateCalendar();
+
+        // 2. Aktualisiere den Kalender unsichtbar jede Minute (60.000 Millisekunden)
+        setInterval(updateCalendar, 60000);
     </script>
 </body>
 </html>
